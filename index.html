@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Multiplicaciones 3-3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #fab1a0;
+            --accent: #00cec9;
+            --bg: #fdfbf7;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            border: 4px solid var(--secondary);
+            box-sizing: border-box;
+        }
+
+        h1 { font-family: 'Fredoka One', cursive; color: var(--primary); margin-bottom: 20px; font-size: 1.6rem; }
+
+        .setup-group { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
+
+        label { font-weight: 600; display: block; margin-bottom: 8px; }
+
+        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--primary); font-size: 1.1rem; font-family: 'Quicksand', sans-serif; }
+
+        .progress-container { width: 100%; background-color: #eee; border-radius: 10px; margin-bottom: 15px; height: 18px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: var(--accent); width: 0%; transition: width 0.3s ease; }
+
+        button {
+            background-color: var(--accent); color: white; border: none; padding: 15px 25px; border-radius: 20px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer; font-family: 'Fredoka One', cursive;
+            box-shadow: 0 4px 0 #00b894; margin: 5px; transition: 0.2s;
+        }
+        button:active { transform: translateY(3px); box-shadow: 0 1px 0 #00b894; }
+
+        .btn-hint { background-color: var(--secondary); box-shadow: 0 4px 0 #e17055; }
+        .btn-back-settings { background-color: #b2bec3; box-shadow: 0 4px 0 #636e72; font-size: 0.9rem; padding: 10px 15px; }
+
+        .multiplication-vertical {
+            font-family: 'Fredoka One', cursive; font-size: 3.5rem; display: flex; flex-direction: column;
+            align-items: flex-end; line-height: 1.1; margin: 20px auto; width: fit-content;
+        }
+        .line { width: 100%; height: 5px; background: var(--text); margin: 8px 0; }
+
+        input[type="number"] {
+            width: 80%; padding: 15px; font-size: 2.2rem; text-align: center;
+            border: 4px solid var(--primary); border-radius: 15px; font-family: 'Fredoka One', cursive; outline: none;
+        }
+
+        .hint-text { margin-top: 15px; padding: 15px; background: #fffef0; border-radius: 15px; display: none; border: 3px dashed var(--secondary); line-height: 1.4; }
+
+        .result-item {
+            text-align: left; background: #f8f9fa; margin-bottom: 20px; padding: 20px;
+            border-radius: 20px; border-left: 10px solid #ccc;
+        }
+        .result-correct { border-left-color: #00b894; }
+        .result-wrong { border-left-color: #ff7675; }
+        .explanation { background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; font-size: 0.95rem; border: 1px solid #ddd; }
+
+        .hidden { display: none; }
+        .nav-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla 1: Configuración -->
+    <div id="setup-screen" class="container">
+        <h1>Bienvenidos a la práctica de Multiplicaciones para los amiguitos de 3-3 ✏️</h1>
+        <div class="setup-group">
+            <label>¿Cuántos ejercicios quieres practicar?</label>
+            <select id="num-exercises">
+                <option value="1">1 ejercicio</option>
+                <option value="2">2 ejercicios</option>
+                <option value="3" selected>3 ejercicios</option>
+                <option value="4">4 ejercicios</option>
+                <option value="5">5 ejercicios</option>
+            </select>
+        </div>
+        <div class="setup-group">
+            <label>¿De cuántas cifras?</label>
+            <select id="num-digits">
+                <option value="1">1 cifra</option>
+                <option value="2" selected>2 cifras</option>
+                <option value="3">3 cifras</option>
+                <option value="4">4 cifras</option>
+            </select>
+        </div>
+        <button onclick="startPractice()">¡VAMOS A JUGAR!</button>
+    </div>
+
+    <!-- Pantalla 2: Práctica -->
+    <div id="practice-screen" class="container hidden">
+        <button class="btn-back-settings" onclick="backToSettings()">⚙️ CAMBIAR CONFIGURACIÓN</button>
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <div class="progress-text" id="progress-info" style="font-weight: 600; margin-bottom: 5px;">Ejercicio 1 de X</div>
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        
+        <div id="current-exercise-container"></div>
+        
+        <div class="nav-buttons">
+            <button id="btn-prev" onclick="prevExercise()">ATRÁS</button>
+            <button id="btn-next" onclick="nextExercise()">SIGUIENTE</button>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button id="btn-hint" class="btn-hint" onclick="toggleHint()">DAME PISTAS 💡</button>
+            <button id="btn-finish" class="hidden" onclick="checkResults()">VER MI RESULTADO</button>
+        </div>
+        <div id="hint-box" class="hint-text"></div>
+    </div>
+
+    <!-- Pantalla 3: Resultados -->
+    <div id="result-screen" class="container hidden">
+        <h1>¡Examen Terminado! 🌈</h1>
+        <div id="score-summary" style="font-size: 1.3rem; margin-bottom: 25px;"></div>
+        <div id="results-detail"></div>
+        <button onclick="location.reload()" style="margin-top: 25px;">VOLVER A INICIO</button>
+    </div>
+
+    <script>
+        let currentExercises = [];
+        let currentIndex = 0;
+        let userAnswers = [];
+
+        function getRandomNumber(digits) {
+            const min = Math.pow(10, digits - 1);
+            const max = Math.pow(10, digits) - 1;
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function backToSettings() {
+            if(confirm("¿Quieres volver al inicio y cambiar los ejercicios? Se perderá lo que has escrito.")) {
+                document.getElementById('practice-screen').classList.add('hidden');
+                document.getElementById('setup-screen').classList.remove('hidden');
+            }
+        }
+
+        function startPractice() {
+            const count = parseInt(document.getElementById('num-exercises').value);
+            const digits = parseInt(document.getElementById('num-digits').value);
+            currentIndex = 0;
+            currentExercises = [];
+            userAnswers = new Array(count).fill("");
+
+            for (let i = 0; i < count; i++) {
+                const n1 = getRandomNumber(digits);
+                const n2 = getRandomNumber(digits);
+                currentExercises.push({ n1, n2, ans: n1 * n2, digits });
+            }
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('practice-screen').classList.remove('hidden');
+            showExercise();
+        }
+
+        function showExercise() {
+            const ex = currentExercises[currentIndex];
+            const container = document.getElementById('current-exercise-container');
+            const total = currentExercises.length;
+
+            document.getElementById('progress-info').innerText = `Ejercicio ${currentIndex + 1} de ${total}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / total) * 100}%`;
+
+            container.innerHTML = `
+                <div class="exercise-box">
+                    <div class="multiplication-vertical">
+                        <div>${ex.n1}</div>
+                        <div>× ${ex.n2}</div>
+                        <div class="line"></div>
+                    </div>
+                    <input type="number" id="user-input" value="${userAnswers[currentIndex]}" placeholder="?" oninput="saveAnswer(this.value)">
+                </div>
+            `;
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            if (currentIndex === total - 1) {
+                document.getElementById('btn-next').classList.add('hidden');
+                document.getElementById('btn-finish').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+                document.getElementById('btn-finish').classList.add('hidden');
+            }
+            document.getElementById('hint-box').style.display = 'none';
+        }
+
+        function saveAnswer(val) { userAnswers[currentIndex] = val; }
+        function nextExercise() { if (currentIndex < currentExercises.length - 1) { currentIndex++; showExercise(); } }
+        function prevExercise() { if (currentIndex > 0) { currentIndex--; showExercise(); } }
+
+        function toggleHint() {
+            const box = document.getElementById('hint-box');
+            const ex = currentExercises[currentIndex];
+            if (box.style.display === 'block') { box.style.display = 'none'; } 
+            else {
+                let msg = ex.digits === 1 
+                    ? `⭐ <b>Recuerda:</b> Multiplicar es como una suma rápida. Tienes que sumar el número <b>${ex.n1}</b> un total de <b>${ex.n2}</b> veces. ¡Es como si una ranita diera saltos iguales!` 
+                    : `🚀 <b>Pista para campeones:</b> Primero multiplica por las unidades. Luego, antes de seguir con las decenas, ¡no olvides dejar el <b>"espacio mágico"</b> (o poner un cero)!`;
+                box.innerHTML = msg;
+                box.style.display = 'block';
+            }
+        }
+
+        function checkResults() {
+            let correctCount = 0;
+            const detailsDiv = document.getElementById('results-detail');
+            detailsDiv.innerHTML = "";
+
+            currentExercises.forEach((ex, i) => {
+                const userVal = userAnswers[i] === "" ? "Nada" : userAnswers[i];
+                const isCorrect = parseInt(userAnswers[i]) === ex.ans;
+                if (isCorrect) correctCount++;
+
+                const resItem = document.createElement('div');
+                resItem.className = `result-item ${isCorrect ? 'result-correct' : 'result-wrong'}`;
+                
+                let expl = ex.digits === 1 
+                    ? `Sumamos <b>${ex.n1}</b> repetidamente <b>${ex.n2}</b> veces. ¡El resultado es <b>${ex.ans}</b>!` 
+                    : `Para resolver <b>${ex.n1} × ${ex.n2}</b>:<br>1. Multiplicas por las unidades.<br>2. Pones un 0 abajo a la derecha.<br>3. Multiplicas por las decenas y sumas todo. ¡El total es <b>${ex.ans}</b>!`;
+
+                resItem.innerHTML = `
+                    <strong>Ejercicio ${i+1}: ${ex.n1} × ${ex.n2}</strong><br>
+                    Tú respondiste: <b>${userVal}</b> | Correcto: <b>${ex.ans}</b> ${isCorrect ? '✅' : '❌'}
+                    <div class="explanation"><b>Guía para aprender:</b> ${expl}</div>
+                `;
+                detailsDiv.appendChild(resItem);
+            });
+
+            const summary = document.getElementById('score-summary');
+            if (correctCount === currentExercises.length) {
+                summary.innerHTML = `<b style="color:#00b894">¡Vas superbien, ese examen no va a poder contigo! 🏆✨</b>`;
+            } else {
+                summary.innerHTML = `Lograste <b>${correctCount} de ${currentExercises.length}</b>. <br>¡No te rindas! Mira abajo cómo se hacían para aprender el truco.`;
+            }
+
+            document.getElementById('practice-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+    </script>
+</body>
+</html>
