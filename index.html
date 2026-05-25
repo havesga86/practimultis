@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica de Multiplicaciones 3-3</title>
+    <title>Práctica de Multiplicaciones - PRACTIMULTIS</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        /* ===========================
+           VARIABLES DE DISEÑO BASE
+           =========================== */
         :root {
             --primary: #6c5ce7;
             --secondary: #fab1a0;
             --accent: #00cec9;
             --bg: #fdfbf7;
             --text: #2d3436;
+            --correct: #00b894;
+            --wrong: #ff7675;
+            --correct-bg: #d4f7ee;
+            --wrong-bg: #ffe5e4;
+            --table-header-bg: #6c5ce7;
         }
+
+        /* ===========================
+           ESTILOS GLOBALES
+           =========================== */
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Quicksand', sans-serif;
@@ -26,6 +39,7 @@
             min-height: 100vh;
         }
 
+        /* Contenedor blanco genérico */
         .container {
             background: white;
             padding: 30px;
@@ -35,60 +49,387 @@
             width: 100%;
             text-align: center;
             border: 4px solid var(--secondary);
-            box-sizing: border-box;
         }
 
-        h1 { font-family: 'Fredoka One', cursive; color: var(--primary); margin-bottom: 20px; font-size: 1.6rem; }
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
 
-        .setup-group { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
+        /* ===========================
+           PANTALLA DE CONFIGURACIÓN
+           =========================== */
+        .setup-group {
+            margin-bottom: 20px;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 15px;
+        }
 
         label { font-weight: 600; display: block; margin-bottom: 8px; }
 
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--primary); font-size: 1.1rem; font-family: 'Quicksand', sans-serif; }
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            font-size: 1.1rem;
+            font-family: 'Quicksand', sans-serif;
+        }
 
-        .progress-container { width: 100%; background-color: #eee; border-radius: 10px; margin-bottom: 15px; height: 18px; overflow: hidden; }
-        .progress-bar { height: 100%; background-color: var(--accent); width: 0%; transition: width 0.3s ease; }
+        /* ===========================
+           SECCIÓN "PRACTICA LAS TABLAS"
+           (en pantalla de inicio)
+           =========================== */
+        .tabla-section {
+            margin-top: 25px;
+            background: linear-gradient(135deg, #f0ecff, #e8f8f8);
+            border-radius: 20px;
+            padding: 20px;
+            border: 3px dashed var(--primary);
+        }
 
+        .tabla-section h2 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .tabla-section p {
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        /* ===========================
+           BOTONES GENERALES
+           =========================== */
         button {
-            background-color: var(--accent); color: white; border: none; padding: 15px 25px; border-radius: 20px;
-            font-size: 1.1rem; font-weight: 600; cursor: pointer; font-family: 'Fredoka One', cursive;
-            box-shadow: 0 4px 0 #00b894; margin: 5px; transition: 0.2s;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            box-shadow: 0 4px 0 #00b894;
+            margin: 5px;
+            transition: 0.2s;
         }
         button:active { transform: translateY(3px); box-shadow: 0 1px 0 #00b894; }
 
-        .btn-hint { background-color: var(--secondary); box-shadow: 0 4px 0 #e17055; }
+        .btn-hint    { background-color: var(--secondary); box-shadow: 0 4px 0 #e17055; }
         .btn-back-settings { background-color: #b2bec3; box-shadow: 0 4px 0 #636e72; font-size: 0.9rem; padding: 10px 15px; }
+        .btn-tabla   { background-color: var(--primary); box-shadow: 0 4px 0 #4d3db0; }
+        .btn-volver  { background-color: #b2bec3; box-shadow: 0 4px 0 #636e72; }
+        .btn-reset-tabla { background-color: #e17055; box-shadow: 0 4px 0 #c0392b; font-size: 0.9rem; padding: 10px 20px; }
+        .btn-print   { background-color: #0984e3; box-shadow: 0 4px 0 #0652a5; }
 
+        /* ===========================
+           BARRA DE PROGRESO
+           =========================== */
+        .progress-container { width: 100%; background-color: #eee; border-radius: 10px; margin-bottom: 15px; height: 18px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: var(--accent); width: 0%; transition: width 0.3s ease; }
+
+        /* ===========================
+           EJERCICIO DE MULTIPLICACIÓN
+           =========================== */
         .multiplication-vertical {
-            font-family: 'Fredoka One', cursive; font-size: 3.5rem; display: flex; flex-direction: column;
-            align-items: flex-end; line-height: 1.1; margin: 20px auto; width: fit-content;
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.1;
+            margin: 20px auto;
+            width: fit-content;
         }
         .line { width: 100%; height: 5px; background: var(--text); margin: 8px 0; }
 
         input[type="number"] {
-            width: 80%; padding: 15px; font-size: 2.2rem; text-align: center;
-            border: 4px solid var(--primary); border-radius: 15px; font-family: 'Fredoka One', cursive; outline: none;
+            width: 80%;
+            padding: 15px;
+            font-size: 2.2rem;
+            text-align: center;
+            border: 4px solid var(--primary);
+            border-radius: 15px;
+            font-family: 'Fredoka One', cursive;
+            outline: none;
         }
 
-        .hint-text { margin-top: 15px; padding: 15px; background: #fffef0; border-radius: 15px; display: none; border: 3px dashed var(--secondary); line-height: 1.4; }
+        /* Ocultar flechas de inputs numéricos */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
 
+        /* ===========================
+           CAJA DE PISTAS (EJERCICIOS)
+           =========================== */
+        .hint-text {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fffef0;
+            border-radius: 15px;
+            display: none;
+            border: 3px dashed var(--secondary);
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        /* ===========================
+           PANTALLA DE RESULTADOS
+           =========================== */
         .result-item {
-            text-align: left; background: #f8f9fa; margin-bottom: 20px; padding: 20px;
-            border-radius: 20px; border-left: 10px solid #ccc;
+            text-align: left;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            border-left: 10px solid #ccc;
         }
-        .result-correct { border-left-color: #00b894; }
-        .result-wrong { border-left-color: #ff7675; }
-        .explanation { background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; font-size: 0.95rem; border: 1px solid #ddd; }
+        .result-correct { border-left-color: var(--correct); }
+        .result-wrong   { border-left-color: var(--wrong); }
+        .explanation    { background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; font-size: 0.95rem; border: 1px solid #ddd; }
 
+        /* ===========================
+           UTILIDADES
+           =========================== */
         .hidden { display: none; }
         .nav-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+
+        /* ===========================
+           PANTALLA TABLA 10×10
+           =========================== */
+        #tabla-screen {
+            background: white;
+            padding: 25px 15px;
+            border-radius: 30px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            max-width: 720px;
+            width: 100%;
+            text-align: center;
+            border: 4px solid var(--secondary);
+        }
+
+        #tabla-screen h1 { font-size: 1.5rem; margin-bottom: 5px; }
+
+        .tabla-instruccion { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+
+        /* Barra de progreso de la tabla */
+        .tabla-score { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; }
+        .tabla-barra-wrap { width: 100%; background: #eee; border-radius: 10px; height: 14px; overflow: hidden; margin-bottom: 15px; }
+        .tabla-barra { height: 100%; background: var(--correct); width: 0%; transition: width 0.3s ease; border-radius: 10px; }
+
+        /* Botones de acción encima de la tabla */
+        .tabla-acciones {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Scroll horizontal en móvil */
+        .tabla-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* Tabla 10×10 */
+        #tabla-multiplicar { border-collapse: collapse; margin: 0 auto 20px auto; min-width: 480px; }
+
+        /* Encabezados */
+        #tabla-multiplicar th {
+            background-color: var(--table-header-bg);
+            color: white;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            width: 46px;
+            height: 46px;
+            text-align: center;
+            padding: 0;
+            border: 2px solid #fff;
+        }
+
+        /* Celda esquina */
+        #tabla-multiplicar th.corner {
+            background: linear-gradient(135deg, var(--primary) 50%, var(--accent) 50%);
+            font-size: 1.3rem;
+        }
+
+        /* Celdas de datos */
+        #tabla-multiplicar td { width: 46px; height: 46px; padding: 2px; border: 2px solid #e0e0e0; }
+
+        #tabla-multiplicar td input {
+            width: 100%; height: 100%;
+            border: none; text-align: center;
+            font-family: 'Fredoka One', cursive; font-size: 1rem;
+            background: transparent; outline: none; cursor: text;
+            padding: 0; min-width: 0; color: var(--text);
+        }
+        #tabla-multiplicar td input::-webkit-inner-spin-button,
+        #tabla-multiplicar td input::-webkit-outer-spin-button { -webkit-appearance: none; }
+        #tabla-multiplicar td input { -moz-appearance: textfield; }
+
+        /* Estados de celdas */
+        #tabla-multiplicar td.celda-vacia      { background-color: #fafafa; }
+        #tabla-multiplicar td.celda-vacia:hover { background-color: #f0ecff; }
+        #tabla-multiplicar td.celda-correcta   { background-color: var(--correct-bg); }
+        #tabla-multiplicar td.celda-correcta input { color: var(--correct); font-weight: 700; }
+        #tabla-multiplicar td.celda-incorrecta { background-color: var(--wrong-bg); }
+        #tabla-multiplicar td.celda-incorrecta input { color: var(--wrong); }
+
+        /* ===========================
+           MODAL DE PISTAS (overlay)
+           Reemplaza la sección fija anterior
+           =========================== */
+        #modal-pistas-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-end; /* aparece desde abajo en móvil */
+            padding: 10px;
+        }
+        #modal-pistas-overlay.visible { display: flex; }
+
+        #modal-pistas-box {
+            background: #fffef0;
+            border: 3px solid var(--secondary);
+            border-radius: 24px 24px 20px 20px;
+            padding: 20px 20px 25px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .modal-header h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Botón "Atrás" dentro del modal */
+        .btn-modal-cerrar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 15px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #4d3db0;
+            margin: 0;
+        }
+        .btn-modal-cerrar:active { transform: translateY(2px); box-shadow: 0 1px 0 #4d3db0; }
+
+        /* Ítem de pista dentro del modal */
+        .pista-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.93rem;
+            line-height: 1.55;
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid #f0e0c0;
+        }
+        .pista-emoji { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+
+        /* ===========================
+           CELEBRACIÓN: tabla completa
+           =========================== */
+        #celebracion-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        #celebracion-overlay.visible { display: flex; }
+
+        #celebracion-box {
+            background: white;
+            border-radius: 28px;
+            border: 4px solid var(--correct);
+            padding: 30px 25px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        #celebracion-box .cel-emoji { font-size: 3.5rem; display: block; margin-bottom: 10px; }
+        #celebracion-box h2 { font-family: 'Fredoka One', cursive; color: var(--correct); font-size: 1.6rem; margin-bottom: 10px; }
+        #celebracion-box p  { font-size: 0.97rem; line-height: 1.6; color: #444; margin-bottom: 20px; }
+
+        /* Confeti simple con CSS */
+        .confeti-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .confeti { position: absolute; width: 10px; height: 10px; border-radius: 2px; animation: caer 2.5s ease-in forwards; }
+        @keyframes caer {
+            0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===========================
+           ESTILOS DE IMPRESIÓN
+           =========================== */
+        @media print {
+            /* Ocultar todo menos la tabla */
+            body > *                         { display: none !important; }
+            #tabla-screen                    { display: block !important; box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .tabla-acciones, .tabla-barra-wrap, .tabla-score, .tabla-instruccion { display: none !important; }
+            #tabla-multiplicar               { min-width: 100%; }
+            #tabla-multiplicar th            { background-color: #6c5ce7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #tabla-multiplicar td input      { font-size: 0.9rem; }
+            /* Título especial para impresión */
+            #print-title                     { display: block !important; font-family: 'Fredoka One', cursive; font-size: 1.4rem; text-align: center; margin-bottom: 15px; color: #6c5ce7; }
+        }
+
+        /* El título de impresión está oculto en pantalla */
+        #print-title { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla 1: Configuración -->
+    <!-- ===========================
+         PANTALLA 1: CONFIGURACIÓN
+         =========================== -->
     <div id="setup-screen" class="container">
         <h1>Bienvenidos a la práctica de Multiplicaciones para los amiguitos de 3-3 ✏️</h1>
+
+        <!-- Cantidad de ejercicios: ahora hasta 10 -->
         <div class="setup-group">
             <label>¿Cuántos ejercicios quieres practicar?</label>
             <select id="num-exercises">
@@ -97,8 +438,15 @@
                 <option value="3" selected>3 ejercicios</option>
                 <option value="4">4 ejercicios</option>
                 <option value="5">5 ejercicios</option>
+                <option value="6">6 ejercicios</option>
+                <option value="7">7 ejercicios</option>
+                <option value="8">8 ejercicios</option>
+                <option value="9">9 ejercicios</option>
+                <option value="10">10 ejercicios</option>
             </select>
         </div>
+
+        <!-- Número de cifras -->
         <div class="setup-group">
             <label>¿De cuántas cifras?</label>
             <select id="num-digits">
@@ -108,32 +456,54 @@
                 <option value="4">4 cifras</option>
             </select>
         </div>
+
         <button onclick="startPractice()">¡VAMOS A JUGAR!</button>
+
+        <!-- Sección de acceso a la tabla interactiva -->
+        <div class="tabla-section">
+            <h2>📊 Practica las tablas de multiplicar</h2>
+            <p>¡Llena la tabla completa del 1 al 10!<br>Escribe el resultado de cada multiplicación y ve si aciertas. 🌟</p>
+            <button class="btn-tabla" onclick="abrirTabla()">¡IR A LA TABLA! 🔢</button>
+        </div>
     </div>
 
-    <!-- Pantalla 2: Práctica -->
+
+    <!-- ===========================
+         PANTALLA 2: EJERCICIOS
+         =========================== -->
     <div id="practice-screen" class="container hidden">
+
+        <!-- Botón volver a configuración -->
         <button class="btn-back-settings" onclick="backToSettings()">⚙️ CAMBIAR CONFIGURACIÓN</button>
         <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-        
-        <div class="progress-text" id="progress-info" style="font-weight: 600; margin-bottom: 5px;">Ejercicio 1 de X</div>
+
+        <!-- Progreso del ejercicio -->
+        <div id="progress-info" style="font-weight: 600; margin-bottom: 5px;">Ejercicio 1 de X</div>
         <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-        
+
+        <!-- Ejercicio actual (generado por JS) -->
         <div id="current-exercise-container"></div>
-        
+
+        <!-- Navegación entre ejercicios -->
         <div class="nav-buttons">
             <button id="btn-prev" onclick="prevExercise()">ATRÁS</button>
             <button id="btn-next" onclick="nextExercise()">SIGUIENTE</button>
         </div>
-        
+
+        <!-- Botones de pista y resultado -->
         <div style="margin-top: 20px;">
             <button id="btn-hint" class="btn-hint" onclick="toggleHint()">DAME PISTAS 💡</button>
             <button id="btn-finish" class="hidden" onclick="checkResults()">VER MI RESULTADO</button>
         </div>
+
+        <!-- Caja de pistas del ejercicio -->
         <div id="hint-box" class="hint-text"></div>
     </div>
 
-    <!-- Pantalla 3: Resultados -->
+
+    <!-- ===========================
+         PANTALLA 3: RESULTADOS
+         =========================== -->
     <div id="result-screen" class="container hidden">
         <h1>¡Examen Terminado! 🌈</h1>
         <div id="score-summary" style="font-size: 1.3rem; margin-bottom: 25px;"></div>
@@ -141,45 +511,204 @@
         <button onclick="location.reload()" style="margin-top: 25px;">VOLVER A INICIO</button>
     </div>
 
+
+    <!-- ===========================
+         PANTALLA 4: TABLA 10×10
+         =========================== -->
+    <div id="tabla-screen" class="hidden">
+
+        <!-- Título visible en pantalla (el de impresión se muestra solo al imprimir) -->
+        <div id="print-title">Tabla de Multiplicar 1 al 10 — ¡Llenada por mí! 🌟</div>
+        <h1>📊 Tabla de Multiplicar 1 al 10</h1>
+        <p class="tabla-instruccion">Escribe el resultado de cada casilla. ✅ Verde = correcto &nbsp; ❌ Rojo = incorrecto</p>
+
+        <!-- Contador de aciertos -->
+        <div class="tabla-score" id="tabla-score-texto">Casillas correctas: 0 / 100</div>
+        <div class="tabla-barra-wrap"><div class="tabla-barra" id="tabla-barra"></div></div>
+
+        <!-- Botones de acción -->
+        <div class="tabla-acciones">
+            <button class="btn-volver"      onclick="cerrarTabla()">← VOLVER AL INICIO</button>
+            <button class="btn-hint"        onclick="abrirModalPistas()">DAME PISTAS 💡</button>
+            <button class="btn-print"       onclick="imprimirTabla()">🖨️ IMPRIME TU TABLA</button>
+            <button class="btn-reset-tabla" onclick="resetTabla()">🔄 BORRAR TODO</button>
+        </div>
+
+        <!-- Tabla con scroll horizontal en móvil -->
+        <div class="tabla-wrapper">
+            <table id="tabla-multiplicar">
+                <!-- Contenido generado por JS -->
+            </table>
+        </div>
+    </div>
+
+
+    <!-- ===========================
+         MODAL DE PISTAS (overlay flotante)
+         Se abre sobre la tabla en móvil y escritorio
+         =========================== -->
+    <div id="modal-pistas-overlay" role="dialog" aria-modal="true" aria-label="Pistas para las tablas">
+        <div id="modal-pistas-box">
+            <div class="modal-header">
+                <h3>💡 Pistas para recordar las tablas</h3>
+                <button class="btn-modal-cerrar" onclick="cerrarModalPistas()">← ATRÁS</button>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">✖️</span>
+                <span><b>¿Qué es multiplicar?</b> Es sumar el mismo número varias veces seguidas. Por ejemplo, <b>3 × 4</b> es lo mismo que <b>3 + 3 + 3 + 3</b>. ¡Son cuatro saltos de 3 en la recta numérica!</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">🔄</span>
+                <span><b>¡El orden no cambia el resultado!</b> <b>3 × 7</b> da lo mismo que <b>7 × 3</b>. Si ya sabes una de las dos, ¡ya sabes la otra también! Eso te ayuda a aprender el doble de rápido.</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">1️⃣</span>
+                <span><b>Tabla del 1:</b> Cualquier número multiplicado por 1 queda <b>exactamente igual</b>. <b>1 × 9 = 9</b>, <b>1 × 7 = 7</b>. El 1 es como un espejo: no cambia nada.</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">🔟</span>
+                <span><b>Tabla del 10:</b> Solo agrega un <b>0</b> al final del número. <b>10 × 6 = 60</b>, <b>10 × 3 = 30</b>. ¡Es la tabla más fácil de todas!</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">✌️</span>
+                <span><b>Tabla del 2:</b> Es como contar de 2 en 2: <b>2, 4, 6, 8, 10, 12...</b> Imagina que das saltitos de dos en dos sobre los números. ¡Son todos los números pares!</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">5️⃣</span>
+                <span><b>Tabla del 5:</b> Los resultados siempre terminan en <b>0 o en 5</b>, y se alternan: 5, 10, 15, 20, 25... Es como contar monedas de 5. ¡Muy fácil de reconocer!</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">9️⃣</span>
+                <span><b>Truco mágico del 9:</b> El primer dígito del resultado va subiendo (1, 2, 3…) y el segundo va bajando (9, 8, 7…). ¡Y siempre suman 9! Ejemplo: <b>9 × 4 = 36</b> → 3 + 6 = 9. ✨ Pruébalo con todos.</span>
+            </div>
+
+            <div class="pista-item">
+                <span class="pista-emoji">🌟</span>
+                <span><b>Para los más difíciles (como 6 × 7):</b> Parte el problema en dos más fáciles. <b>6 × 7</b> = piensa en <b>6 × 6 = 36</b> y súmale un 6 más: <b>36 + 6 = 42</b>. ¡Divide y vencerás!</span>
+            </div>
+
+            <div style="text-align: center; margin-top: 10px;">
+                <button class="btn-modal-cerrar" onclick="cerrarModalPistas()">← VOLVER A LA TABLA</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===========================
+         OVERLAY DE CELEBRACIÓN (tabla completa)
+         =========================== -->
+    <div id="celebracion-overlay" role="dialog" aria-modal="true">
+        <!-- Confeti generado por JS -->
+        <div class="confeti-wrap" id="confeti-wrap"></div>
+
+        <div id="celebracion-box">
+            <span class="cel-emoji">🏆</span>
+            <h2>¡Lo lograste! ¡Eres increíble!</h2>
+            <p>
+                ¡Completaste todas las 100 casillas correctamente! 🎉<br><br>
+                Aprender las tablas de multiplicar es como tener una <b>superpotencia matemática</b>: te ayudará en la escuela, al hacer compras, al medir cosas y en muchísimas situaciones de la vida. ¡Cada tabla que memorizas te hace más listo! 🧠✨
+            </p>
+            <button class="btn-print" onclick="imprimirTabla()">🖨️ IMPRIME TU TABLA</button>
+            <button onclick="cerrarCelebracion()" style="margin-top: 5px;">¡SEGUIR PRACTICANDO! 💪</button>
+        </div>
+    </div>
+
+
+    <!-- ===========================
+         JAVASCRIPT
+         =========================== -->
     <script>
+        /* ===========================
+           VARIABLES GLOBALES
+           =========================== */
         let currentExercises = [];
         let currentIndex = 0;
-        let userAnswers = [];
+        let userAnswers  = [];
+        let tablaYaCelebro = false; // evita mostrar celebración más de una vez
 
+        /* ===========================
+           GENERACIÓN DE EJERCICIOS
+           =========================== */
+
+        // Genera un número aleatorio de N dígitos
         function getRandomNumber(digits) {
             const min = Math.pow(10, digits - 1);
             const max = Math.pow(10, digits) - 1;
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        // Para 1 cifra: genera pares únicos sin repetir la misma multiplicación exacta.
+        // Considera a×b y b×a como diferentes (son presentaciones distintas).
+        function generarEjerciciosSinRepetir(count, digits) {
+            const ejercicios = [];
+
+            if (digits === 1) {
+                // Todos los pares posibles (1-9 × 1-9) = 81 combinaciones
+                const todosLosPares = [];
+                for (let a = 1; a <= 9; a++) {
+                    for (let b = 1; b <= 9; b++) {
+                        todosLosPares.push([a, b]);
+                    }
+                }
+                // Mezclar con Fisher-Yates
+                for (let i = todosLosPares.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [todosLosPares[i], todosLosPares[j]] = [todosLosPares[j], todosLosPares[i]];
+                }
+                // Tomar los primeros N (máximo 81, pero el select solo llega a 10)
+                for (let i = 0; i < Math.min(count, todosLosPares.length); i++) {
+                    const [n1, n2] = todosLosPares[i];
+                    ejercicios.push({ n1, n2, ans: n1 * n2, digits });
+                }
+            } else {
+                // Para 2+ cifras hay suficientes combinaciones; se usa aleatorio simple
+                for (let i = 0; i < count; i++) {
+                    const n1 = getRandomNumber(digits);
+                    const n2 = getRandomNumber(digits);
+                    ejercicios.push({ n1, n2, ans: n1 * n2, digits });
+                }
+            }
+
+            return ejercicios;
+        }
+
+        /* ===========================
+           PANTALLA DE EJERCICIOS
+           =========================== */
+
+        // Regresa a la pantalla de configuración
         function backToSettings() {
-            if(confirm("¿Quieres volver al inicio y cambiar los ejercicios? Se perderá lo que has escrito.")) {
+            if (confirm("¿Quieres volver al inicio y cambiar los ejercicios? Se perderá lo que has escrito.")) {
                 document.getElementById('practice-screen').classList.add('hidden');
                 document.getElementById('setup-screen').classList.remove('hidden');
             }
         }
 
+        // Inicia la práctica con la configuración elegida
         function startPractice() {
-            const count = parseInt(document.getElementById('num-exercises').value);
+            const count  = parseInt(document.getElementById('num-exercises').value);
             const digits = parseInt(document.getElementById('num-digits').value);
             currentIndex = 0;
-            currentExercises = [];
-            userAnswers = new Array(count).fill("");
+            userAnswers  = new Array(count).fill("");
+            currentExercises = generarEjerciciosSinRepetir(count, digits);
 
-            for (let i = 0; i < count; i++) {
-                const n1 = getRandomNumber(digits);
-                const n2 = getRandomNumber(digits);
-                currentExercises.push({ n1, n2, ans: n1 * n2, digits });
-            }
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('practice-screen').classList.remove('hidden');
             showExercise();
         }
 
+        // Renderiza el ejercicio actual
         function showExercise() {
-            const ex = currentExercises[currentIndex];
+            const ex      = currentExercises[currentIndex];
+            const total   = currentExercises.length;
             const container = document.getElementById('current-exercise-container');
-            const total = currentExercises.length;
 
             document.getElementById('progress-info').innerText = `Ejercicio ${currentIndex + 1} de ${total}`;
             document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / total) * 100}%`;
@@ -191,10 +720,13 @@
                         <div>× ${ex.n2}</div>
                         <div class="line"></div>
                     </div>
-                    <input type="number" id="user-input" value="${userAnswers[currentIndex]}" placeholder="?" oninput="saveAnswer(this.value)">
+                    <input type="number" id="user-input" value="${userAnswers[currentIndex]}"
+                           placeholder="?" oninput="saveAnswer(this.value)">
                 </div>
             `;
-            document.getElementById('btn-prev').disabled = currentIndex === 0;
+
+            document.getElementById('btn-prev').disabled = (currentIndex === 0);
+
             if (currentIndex === total - 1) {
                 document.getElementById('btn-next').classList.add('hidden');
                 document.getElementById('btn-finish').classList.remove('hidden');
@@ -202,61 +734,310 @@
                 document.getElementById('btn-next').classList.remove('hidden');
                 document.getElementById('btn-finish').classList.add('hidden');
             }
+
+            // Cerrar pista al cambiar de ejercicio
             document.getElementById('hint-box').style.display = 'none';
         }
 
+        // Guarda la respuesta del ejercicio actual
         function saveAnswer(val) { userAnswers[currentIndex] = val; }
-        function nextExercise() { if (currentIndex < currentExercises.length - 1) { currentIndex++; showExercise(); } }
-        function prevExercise() { if (currentIndex > 0) { currentIndex--; showExercise(); } }
 
-        function toggleHint() {
-            const box = document.getElementById('hint-box');
-            const ex = currentExercises[currentIndex];
-            if (box.style.display === 'block') { box.style.display = 'none'; } 
-            else {
-                let msg = ex.digits === 1 
-                    ? `⭐ <b>Recuerda:</b> Multiplicar es como una suma rápida. Tienes que sumar el número <b>${ex.n1}</b> un total de <b>${ex.n2}</b> veces. ¡Es como si una ranita diera saltos iguales!` 
-                    : `🚀 <b>Pista para campeones:</b> Primero multiplica por las unidades. Luego, antes de seguir con las decenas, ¡no olvides dejar el <b>"espacio mágico"</b> (o poner un cero)!`;
-                box.innerHTML = msg;
-                box.style.display = 'block';
+        // Navegación entre ejercicios
+        // SIGUIENTE: no avanza si el niño no ha escrito ninguna respuesta
+        function nextExercise() {
+            if (currentIndex < currentExercises.length - 1) {
+                const respuesta = userAnswers[currentIndex].toString().trim();
+                if (respuesta === '' || respuesta === 'NaN') {
+                    mostrarAviso('¡Escribe tu respuesta antes de continuar! ✏️');
+                    return;
+                }
+                currentIndex++;
+                showExercise();
             }
         }
+        function prevExercise() { if (currentIndex > 0) { currentIndex--; showExercise(); } }
 
+        // Muestra un aviso amigable debajo del input sin usar alert()
+        function mostrarAviso(msg) {
+            let aviso = document.getElementById('aviso-siguiente');
+            if (!aviso) {
+                aviso = document.createElement('p');
+                aviso.id = 'aviso-siguiente';
+                aviso.style.cssText = 'color:#e17055;font-weight:700;margin-top:10px;font-size:1rem;';
+                document.getElementById('current-exercise-container').appendChild(aviso);
+            }
+            aviso.textContent = msg;
+            clearTimeout(aviso._t);
+            aviso._t = setTimeout(() => { aviso.textContent = ''; }, 2500);
+        }
+
+        // Muestra u oculta la pista contextual del ejercicio.
+        // REGLA ESTRICTA: NO se revelan los números del ejercicio actual ni su resultado.
+        // Solo se explica el método con ejemplos completamente genéricos.
+        function toggleHint() {
+            const box = document.getElementById('hint-box');
+            const ex  = currentExercises[currentIndex];
+
+            if (box.style.display === 'block') {
+                box.style.display = 'none';
+                return;
+            }
+
+            let msg = '';
+            if (ex.digits === 1) {
+                msg = `⭐ <b>¿Qué es multiplicar?</b><br>
+                       Multiplicar es sumar el mismo número varias veces seguidas.<br><br>
+                       Ejemplo: <b>2 × 3</b> significa "tres veces el 2": <b>2 + 2 + 2</b>.<br><br>
+                       🔄 <b>Truco:</b> el orden no cambia el resultado. <b>4 × 6</b> da lo mismo que <b>6 × 4</b>.<br><br>
+                       💡 <b>¿Recuerdas la tabla?</b> Cuenta de cuánto en cuánto necesitas llegar. Por ejemplo, la tabla del 5 va de 5 en 5: 5, 10, 15, 20...`;
+            } else {
+                msg = `🚀 <b>¿Cómo se multiplican números grandes?</b><br><br>
+                       Usamos un ejemplo completamente diferente: <b>21 × 13</b><br><br>
+                       <b>Paso 1 — Unidades:</b> Multiplica el número de arriba por el dígito de las <b>unidades</b> del número de abajo (3):<br>
+                       &nbsp;&nbsp;21 × 3 = 63<br><br>
+                       <b>Paso 2 — Espacio mágico:</b> En la siguiente fila escribe un <b>0</b> al final (reserva el lugar de las decenas).<br><br>
+                       <b>Paso 3 — Decenas:</b> Multiplica el número de arriba por el dígito de las <b>decenas</b> del número de abajo (1):<br>
+                       &nbsp;&nbsp;21 × 1 = 21 → escribes <b>210</b> (porque va en la fila de las decenas)<br><br>
+                       <b>Paso 4 — Suma final:</b> Suma los dos resultados parciales: 63 + 210 = 273 ✅<br><br>
+                       💡 ¡Aplica exactamente esos mismos 4 pasos a tu ejercicio!`;
+            }
+
+            box.innerHTML = msg;
+            box.style.display = 'block';
+        }
+
+        // Evalúa todas las respuestas y muestra la pantalla de resultados
         function checkResults() {
             let correctCount = 0;
             const detailsDiv = document.getElementById('results-detail');
             detailsDiv.innerHTML = "";
 
             currentExercises.forEach((ex, i) => {
-                const userVal = userAnswers[i] === "" ? "Nada" : userAnswers[i];
+                const userVal  = userAnswers[i] === "" ? "Nada" : userAnswers[i];
                 const isCorrect = parseInt(userAnswers[i]) === ex.ans;
                 if (isCorrect) correctCount++;
 
                 const resItem = document.createElement('div');
                 resItem.className = `result-item ${isCorrect ? 'result-correct' : 'result-wrong'}`;
-                
-                let expl = ex.digits === 1 
-                    ? `Sumamos <b>${ex.n1}</b> repetidamente <b>${ex.n2}</b> veces. ¡El resultado es <b>${ex.ans}</b>!` 
-                    : `Para resolver <b>${ex.n1} × ${ex.n2}</b>:<br>1. Multiplicas por las unidades.<br>2. Pones un 0 abajo a la derecha.<br>3. Multiplicas por las decenas y sumas todo. ¡El total es <b>${ex.ans}</b>!`;
+
+                let expl = '';
+                if (ex.digits === 1) {
+                    const sumaEjemplo = Array.from({ length: ex.n2 }, () => ex.n1).join(' + ');
+                    expl = `Multiplicar <b>${ex.n1} × ${ex.n2}</b> es sumar <b>${ex.n1}</b> un total de <b>${ex.n2}</b> veces:<br>
+                            ${sumaEjemplo} = <b>${ex.ans}</b>`;
+                } else {
+                    const unidades = ex.n2 % 10;
+                    const decenas  = Math.floor(ex.n2 / 10);
+                    expl = `Para <b>${ex.n1} × ${ex.n2}</b>:<br>
+                            1. ${ex.n1} × ${unidades} (unidades) = ${ex.n1 * unidades}<br>
+                            2. Agrega un 0 al inicio de la segunda fila.<br>
+                            3. ${ex.n1} × ${decenas} (decenas) = ${ex.n1 * decenas} → escribes ${ex.n1 * decenas}0<br>
+                            4. Suma todo: <b>${ex.ans}</b> ✅`;
+                }
 
                 resItem.innerHTML = `
-                    <strong>Ejercicio ${i+1}: ${ex.n1} × ${ex.n2}</strong><br>
-                    Tú respondiste: <b>${userVal}</b> | Correcto: <b>${ex.ans}</b> ${isCorrect ? '✅' : '❌'}
-                    <div class="explanation"><b>Guía para aprender:</b> ${expl}</div>
+                    <strong>Ejercicio ${i + 1}: ${ex.n1} × ${ex.n2}</strong><br>
+                    Tú respondiste: <b>${userVal}</b> | Respuesta correcta: <b>${ex.ans}</b> ${isCorrect ? '✅' : '❌'}
+                    <div class="explanation"><b>¿Cómo se hace?</b> ${expl}</div>
                 `;
                 detailsDiv.appendChild(resItem);
             });
 
             const summary = document.getElementById('score-summary');
             if (correctCount === currentExercises.length) {
-                summary.innerHTML = `<b style="color:#00b894">¡Vas superbien, ese examen no va a poder contigo! 🏆✨</b>`;
+                summary.innerHTML = `<b style="color:var(--correct)">¡Perfectísimo! ¡Eres un campeón de las multiplicaciones! 🏆✨</b>`;
+            } else if (correctCount >= Math.ceil(currentExercises.length / 2)) {
+                summary.innerHTML = `¡Muy bien! Acertaste <b>${correctCount} de ${currentExercises.length}</b>. 😊<br>¡Lee abajo cómo mejorar los que fallaste!`;
             } else {
-                summary.innerHTML = `Lograste <b>${correctCount} de ${currentExercises.length}</b>. <br>¡No te rindas! Mira abajo cómo se hacían para aprender el truco.`;
+                summary.innerHTML = `Acertaste <b>${correctCount} de ${currentExercises.length}</b>. <br>¡No te rindas! Lee abajo los trucos para aprender el secreto de cada uno. 💪`;
             }
 
             document.getElementById('practice-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
-            window.scrollTo(0,0);
+            window.scrollTo(0, 0);
+        }
+
+
+        /* ===========================
+           FUNCIONES DE LA TABLA 10×10
+           =========================== */
+
+        // Abre la pantalla de la tabla
+        function abrirTabla() {
+            tablaYaCelebro = false;
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('tabla-screen').classList.remove('hidden');
+            construirTabla();
+            window.scrollTo(0, 0);
+        }
+
+        // Cierra la tabla y vuelve al inicio
+        function cerrarTabla() {
+            document.getElementById('tabla-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+        }
+
+        // Construye la tabla 10×10 dinámicamente
+        function construirTabla() {
+            const tabla = document.getElementById('tabla-multiplicar');
+            tabla.innerHTML = '';
+
+            // Fila de encabezados horizontales (1 al 10)
+            const headRow = document.createElement('tr');
+            const cornerTh = document.createElement('th');
+            cornerTh.className = 'corner';
+            cornerTh.textContent = '×';
+            headRow.appendChild(cornerTh);
+
+            for (let col = 1; col <= 10; col++) {
+                const th = document.createElement('th');
+                th.textContent = col;
+                headRow.appendChild(th);
+            }
+            tabla.appendChild(headRow);
+
+            // Filas del 1 al 10 con encabezado vertical
+            for (let row = 1; row <= 10; row++) {
+                const tr = document.createElement('tr');
+
+                // Encabezado de la fila (número vertical)
+                const thRow = document.createElement('th');
+                thRow.textContent = row;
+                tr.appendChild(thRow);
+
+                // Celdas de entrada de respuestas
+                for (let col = 1; col <= 10; col++) {
+                    const td = document.createElement('td');
+                    td.className = 'celda-vacia';
+                    td.dataset.row = row;
+                    td.dataset.col = col;
+
+                    const input = document.createElement('input');
+                    input.type  = 'number';
+                    input.min   = '1';
+                    input.setAttribute('aria-label', `${row} × ${col}`);
+                    input.addEventListener('input', function () {
+                        evaluarCelda(td, input, row * col);
+                    });
+
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                }
+
+                tabla.appendChild(tr);
+            }
+
+            actualizarMarcadorTabla();
+        }
+
+        // Evalúa la celda al escribir: correcto, incorrecto o vacío
+        function evaluarCelda(td, input, respuestaCorrecta) {
+            const valor = input.value.trim();
+
+            if (valor === '') {
+                td.className = 'celda-vacia';
+            } else if (parseInt(valor) === respuestaCorrecta) {
+                td.className = 'celda-correcta';
+            } else {
+                td.className = 'celda-incorrecta';
+            }
+
+            actualizarMarcadorTabla();
+        }
+
+        // Actualiza el contador y barra de progreso; detecta tabla completa
+        function actualizarMarcadorTabla() {
+            const correctas = document.querySelectorAll('#tabla-multiplicar td.celda-correcta').length;
+            const total = 100;
+
+            document.getElementById('tabla-score-texto').textContent = `Casillas correctas: ${correctas} / ${total}`;
+            document.getElementById('tabla-barra').style.width = `${(correctas / total) * 100}%`;
+
+            // Celebrar cuando se completan las 100 casillas correctamente (solo una vez)
+            if (correctas === total && !tablaYaCelebro) {
+                tablaYaCelebro = true;
+                setTimeout(mostrarCelebracion, 400);
+            }
+        }
+
+        // Borra todas las respuestas de la tabla
+        function resetTabla() {
+            if (confirm("¿Borrar todas las respuestas y empezar de nuevo?")) {
+                tablaYaCelebro = false;
+                document.querySelectorAll('#tabla-multiplicar td').forEach(td => {
+                    td.className = 'celda-vacia';
+                    const input = td.querySelector('input');
+                    if (input) input.value = '';
+                });
+                actualizarMarcadorTabla();
+            }
+        }
+
+        /* ===========================
+           MODAL DE PISTAS (overlay)
+           =========================== */
+
+        // Abre el modal de pistas
+        function abrirModalPistas() {
+            document.getElementById('modal-pistas-overlay').classList.add('visible');
+            document.body.style.overflow = 'hidden'; // bloquea scroll del fondo
+        }
+
+        // Cierra el modal de pistas
+        function cerrarModalPistas() {
+            document.getElementById('modal-pistas-overlay').classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar modal al tocar el fondo oscuro (fuera del contenido)
+        document.getElementById('modal-pistas-overlay').addEventListener('click', function (e) {
+            if (e.target === this) cerrarModalPistas();
+        });
+
+        /* ===========================
+           CELEBRACIÓN: tabla completa
+           =========================== */
+
+        // Muestra el overlay de felicitación con confeti
+        function mostrarCelebracion() {
+            const overlay = document.getElementById('celebracion-overlay');
+            overlay.classList.add('visible');
+            generarConfeti();
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Cierra la celebración
+        function cerrarCelebracion() {
+            document.getElementById('celebracion-overlay').classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        // Genera piezas de confeti con colores y posiciones aleatorias
+        function generarConfeti() {
+            const wrap = document.getElementById('confeti-wrap');
+            wrap.innerHTML = '';
+            const colores = ['#6c5ce7','#fab1a0','#00cec9','#fdcb6e','#ff7675','#00b894','#a29bfe'];
+            for (let i = 0; i < 60; i++) {
+                const div = document.createElement('div');
+                div.className = 'confeti';
+                div.style.left     = Math.random() * 100 + 'vw';
+                div.style.top      = '-20px';
+                div.style.background = colores[Math.floor(Math.random() * colores.length)];
+                div.style.width    = (Math.random() * 8 + 6) + 'px';
+                div.style.height   = (Math.random() * 8 + 6) + 'px';
+                div.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                div.style.animationDelay   = (Math.random() * 0.8) + 's';
+                wrap.appendChild(div);
+            }
+        }
+
+        /* ===========================
+           IMPRESIÓN DE LA TABLA
+           =========================== */
+
+        // Imprime la tabla usando los estilos @media print definidos en CSS
+        function imprimirTabla() {
+            window.print();
         }
     </script>
 </body>
